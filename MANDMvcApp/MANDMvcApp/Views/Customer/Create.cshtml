@@ -1,0 +1,123 @@
+﻿@using System.Web.Script.Serialization;
+@using MANDMvcApp.Controllers;
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Create</h2>
+<html>
+<head>
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-2.1.4.js"></script>
+     <script src="~/Scripts/knockout-3.3.0.js"></script>
+     <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/knockout.mapping-latest.js"></script>
+
+
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+</head>
+<body>
+    <table id="tbldml">
+        <tr>
+            <td>Customer ID</td>
+            <td><input type="text" id="txtCustomerID" data-bind="value:$root.CustomerID" disabled="disabled" /></td>
+        </tr>
+        <tr>
+            <td>Customer Name:</td>
+            <td>
+                <input type="text" id="txtCustomerName" data-bind="value:$root.CustomerName" />
+            </td>
+        </tr>
+        <tr>
+            <td>Contact Name:</td>
+            <td>
+                <input type="text" id="txtContactName" data-bind="value: $root.ContactName" />
+            </td>
+        </tr>
+        <tr>
+            <td>Address:</td>
+            <td>
+                <input type="text" id="txtAddress" data-bind="value:$root.Address" />
+            </td>
+        </tr>
+        <tr>
+            <td>City</td>
+            <td>
+                <input type="text" id="txtCity" data-bind="value:$root.City" />
+            </td>
+        </tr>
+        <tr>
+            <td>PostalCode</td>
+            <td>
+                <input type="text" id="txtPostalCode" data-bind="value:$root.PostalCode" />
+            </td>
+        </tr>
+        <tr>
+            <td>Country:</td>
+            <td>
+                <input type="text" id="txtCountry" data-bind="value:$root.Country" />
+            </td>
+        </tr>
+        <tr>
+            <!--The click binding has the JavaScirpt methods passed to it-->
+            <td><button data-bind="click:$root.save">Save</button></td>
+            
+        </tr>
+    </table>
+   
+
+    <script type="text/javascript">
+    var Model1 = function () {
+        //Make the self as 'this' reference
+        var self = this;
+        //Declare observable which will be bind with UI
+        self.CustomerName = ko.observable("");
+        self.ContactName = ko.observable("");
+        self.Address = ko.observable("");
+        self.City = ko.observable("");
+        self.PostalCode = ko.observable("");
+        self.Country = ko.observable("");
+
+                //The Object which stored data entered in the observables
+        var EmpData = {
+            CustomerID: self.CustomerID,
+            CustomerName: self.CustomerName,
+            ContactName: self.ContactName,
+            Address: self.Address,
+            City: self.City,
+            PostalCode: self.PostalCode,
+            Country: self.Country
+        };
+
+        self.Customers = ko.observableArray([]);
+
+        GetEmployees(); //Call the Function which gets all records using ajax call
+
+        //Function to perform POST (insert Employee) operation
+        self.save = function () {
+            //Ajax call to Insert the Employee
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:53060/api/CustomerInfoAPI",
+                data: ko.toJSON(EmpData), //Convert the Observable Data into JSON
+                contentType: "application/json",
+                success: function (data) {
+                    alert("Record Added Successfully");
+                    self.CustomerID(data.CustomerID);
+                    alert("The New Customer Id :" + self.CustomerID());
+                    GetCustomers();
+                }
+            });
+
+            //Ends Here
+        };
+
+    };
+    ko.applyBindings(new Model1());
+    </script>
+
+</body>
+</html>

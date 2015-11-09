@@ -1,0 +1,106 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<html>
+
+<head>
+    <link href="~/Content/Site.css" rel="stylesheet" />
+  
+    <script src="~/Scripts/jquery-2.1.4.js"></script>
+    <script src="~/Scripts/knockout-2.2.0.js"></script>
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/knockout.mapping-latest.debug.js"></script>
+    <script src="~/Scripts/knockout.mapping-latest.js"></script>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+</head>
+<body>
+    <div>
+        <form>
+            <table>
+                <tr>
+                    
+                    <td>
+                        <div>
+                            <!--If the lenght of the Customers is greater than 0 then visible the Table-->
+                            <table data-bind="visible:Customers().length>0" style="border: double">
+                                <thead>
+                                    <tr>
+                                        <td>Customer ID </td>
+                                        <td>Customer Name </td>
+                                        <td>Contact Name </td>
+                                        <td>Address </td>
+                                        <td>City </td>
+                                        <td>Postal Code</td>
+                                        <td>Country</td>
+                                    </tr>
+                                </thead>
+                                <!--Iterate through an observableArray using foreach-->
+                                <tbody data-bind="foreach:Customers">
+                                    <tr style="border: solid">
+                                        <td><span data-bind="text:CustomerID"></span></td>
+                                        <td><span data-bind="text:CustomerName"></span></td>
+                                        <td><span data-bind="text:ContactName"></span></td>
+                                        <td><span data-bind="text:Address"></span></td>
+                                        <td><span data-bind="text:City"></span></td>
+                                        <td><span data-bind="text:PostalCode"></span></td>
+                                        <td><span data-bind="text:Country"></span></td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        @*<input id="btnLoadData" type="button" value="Read Information" onclick="" />
+            <input id="Button1" type="button" value="button" />*@
+
+        <a href="~/customer/create" class="Button">Text</a>
+        @*<input type='button' value='Dummy Button' onclick='window.location = "@Url.Action("YourAction", "YourController")";' />*@
+        @*<input type="button" value="Some text" onclick="window.location.href='<%= Url.Action("actionName", "controllerName") %>';" />*@
+    </div>
+
+    <script type="text/javascript">
+    var Model1 = function () {
+
+        var EmpData = {
+            CustomerID: self.CustomerID,
+            CustomerName: self.CustomerName,
+            ContactName: self.ContactName,
+            Address: self.Address,
+            City: self.City,
+            PostalCode: self.PostalCode,
+            Country: self.Country
+        };
+        function GetCustomers() {
+            //Ajax Call Get All Customer Records
+            $.ajax({
+                type: "GET",
+                url: "http://localhost:53060/api/CustomerInfoAPI",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    self.Customers(data); //Put the response in ObservableArray
+                },
+                error: function (error) {
+                    alert(error.status + "<--and--> " + error.statusText);
+                }
+            });
+            //Ends Here
+        }
+        //Declare an ObservableArray for Storing the JSON Response
+        self.Customers= ko.observableArray([]);
+         GetCustomers(); //Call the Function which gets all records using ajax call
+
+            
+    };
+    ko.applyBindings(new Model1());
+    </script>
+
+</body>
+</html>
